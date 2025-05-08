@@ -136,12 +136,16 @@ interface BigObject {
     [a: string]: { cvalue: number | string | undefined | BigObject } | undefined;
 }
 
+function isBigObject(val: unknown): val is BigObject {
+  return typeof val === 'object' && val !== null;
+}
+
 function summ(a: BigObject): number {
     const x = Object.keys(a).map((k) => {
       const elem = a[k];
         if (!elem || typeof elem.cvalue === 'undefined') return 2021;
         if (typeof elem.cvalue === 'string') return +elem.cvalue || 2021;
-        if (typeof elem.cvalue === 'object' && elem.cvalue !== null) return summ(elem.cvalue as BigObject);
+        if (isBigObject(elem.cvalue)) return summ(elem.cvalue);
         return elem.cvalue;
     });
     let sum = 0;
