@@ -86,4 +86,70 @@ const hello = async (): Promise<string> => {
 
 hello()
     .then(r => console.log(r))
-    .catch(e => console.log("fail"));
+  .catch(e => console.log("fail"));
+    
+
+const entry = {
+   hello: {cvalue: 1}, 
+   world: { cvalue: 
+      { yay: { cvalue: "2" }  } 
+   },
+  test: { cvalue: "test" },
+}
+
+type Value = number | string | entryObject | undefined;
+type entryObject = {
+  [key: string]: { cvalue: Value } | undefined;
+};
+
+function sumOfEntries(obj: entryObject): number {
+  let sum = 0;
+
+  for (const key in obj) {
+    const entry = obj[key];
+
+    if (!entry || entry.cvalue === undefined) {
+      sum += 2021;
+      continue;
+    }
+
+    const value = entry.cvalue;
+
+    if (typeof value === "number") {
+      sum += value;
+    } else if (typeof value === "string") {
+      const parsed = Number(value);
+      sum += isNaN(parsed) ? 2021 : parsed;
+    } else if (typeof value === "object") {
+      sum += sumOfEntries(value as entryObject);
+    } else {
+      sum += 2021;
+    }
+  }
+
+  return sum;
+}
+
+console.log("sumOfEntries result: " + sumOfEntries(entry));
+
+interface BigObject {
+    [a: string]: { cvalue: number | string | undefined | BigObject } | undefined;
+}
+
+function summ(a: BigObject): number {
+    const x = Object.keys(a).map((k) => {
+      const elem = a[k];
+        if (!elem || typeof elem.cvalue === 'undefined') return 2021;
+        if (typeof elem.cvalue === 'string') return +elem.cvalue || 2021;
+        if (typeof elem.cvalue === 'object' && elem.cvalue !== null) return summ(elem.cvalue as BigObject);
+        return elem.cvalue;
+    });
+    let sum = 0;
+    for (let i = 0; i < x.length; i++) {
+        sum += x[i];
+    }
+    return sum;
+}
+
+
+console.log("summ result: " + summ(entry));
