@@ -121,7 +121,7 @@ function sumOfEntries(obj: entryObject): number {
       const parsed = Number(value);
       sum += isNaN(parsed) ? 2021 : parsed;
     } else if (typeof value === "object") {
-      sum += sumOfEntries(value as entryObject);
+      sum += sumOfEntries(value);
     } else {
       sum += 2021;
     }
@@ -132,27 +132,25 @@ function sumOfEntries(obj: entryObject): number {
 
 console.log("sumOfEntries result: " + sumOfEntries(entry));
 
+const defaultValue = 2021;
 interface BigObject {
     [a: string]: { cvalue: number | string | undefined | BigObject } | undefined;
 }
 
-function isBigObject(val: unknown): val is BigObject {
-  return typeof val === 'object' && val !== null;
-}
-
 function summ(a: BigObject): number {
     const x = Object.keys(a).map((k) => {
-      const elem = a[k];
-        if (!elem || typeof elem.cvalue === 'undefined') return 2021;
-        if (typeof elem.cvalue === 'string') return +elem.cvalue || 2021;
-        if (isBigObject(elem.cvalue)) return summ(elem.cvalue);
-        return elem.cvalue;
+      const elem = a[k]?.cvalue;
+        if (elem == null) return defaultValue;
+        if (typeof elem === 'string') {
+          const n = +elem;
+          return isNaN(n) ? defaultValue : n;
+        }
+        if (typeof elem === 'number') {
+          return elem;
+        }
+        return summ(elem);
     });
-    let sum = 0;
-    for (let i = 0; i < x.length; i++) {
-        sum += x[i];
-    }
-    return sum;
+    return x.reduce((acc, val) => acc + val, 0);
 }
 
 

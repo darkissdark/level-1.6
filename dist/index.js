@@ -111,22 +111,22 @@ function sumOfEntries(obj) {
     return sum;
 }
 console.log("sumOfEntries result: " + sumOfEntries(entry));
+const defaultValue = 2021;
 function summ(a) {
     const x = Object.keys(a).map((k) => {
-        const elem = a[k];
-        if (!elem || typeof elem.cvalue === 'undefined')
-            return 2021;
-        if (typeof elem.cvalue === 'string')
-            return +elem.cvalue || 2021;
-        if (typeof elem.cvalue === 'object' && elem.cvalue !== null)
-            return summ(elem.cvalue);
-        return elem.cvalue;
+        var _a;
+        const elem = (_a = a[k]) === null || _a === void 0 ? void 0 : _a.cvalue;
+        if (elem == null)
+            return defaultValue;
+        if (typeof elem === 'string') {
+            const n = +elem;
+            return isNaN(n) ? defaultValue : n;
+        }
+        if (typeof elem === 'number') {
+            return elem;
+        }
+        return summ(elem);
     });
-    console.log("x: " + x);
-    let sum = 0;
-    for (let i = 0; i < x.length; i++) {
-        sum += x[i];
-    }
-    return sum;
+    return x.reduce((acc, val) => acc + val, 0);
 }
 console.log("summ result: " + summ(entry));
